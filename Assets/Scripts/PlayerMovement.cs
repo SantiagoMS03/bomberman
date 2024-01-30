@@ -22,12 +22,14 @@ public class PlayerMovement : MonoBehaviour
     [Header("Player Movement")]
     public Rigidbody2D rb;
     public float moveSpeed;
-    public Vector2 PlayerInput;
+    public Vector2 PlayerInput; 
+    Animator Player_Anim;
 
     void Start()
     {
         Player_Pos = gameObject.GetComponent<Transform>();
         BombEffects = Spawn_Bombs.GetComponent<BombController>();
+        Player_Anim = GetComponent<Animator>();
         BombEffects.Firepower_Setter = 0;
     }
 
@@ -42,6 +44,19 @@ public class PlayerMovement : MonoBehaviour
         // Player input movement
         PlayerInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
+        
+        // Player animation
+        if (PlayerInput != Vector2.zero)
+        {
+            Player_Anim.SetBool("isWalking", true);
+            Player_Anim.SetFloat("input_x", PlayerInput.x);
+            Player_Anim.SetFloat("input_y", PlayerInput.normalized.y);
+        }
+        else
+        {
+            Player_Anim.SetBool("isWalking", false);
+        }
+        
         // Bomb placement 
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Z))
         {
@@ -113,4 +128,6 @@ public class PlayerMovement : MonoBehaviour
             CanPlaceBomb = false;
         }
     }
+
+   
 }
