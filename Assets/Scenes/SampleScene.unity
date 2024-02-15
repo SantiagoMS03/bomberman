@@ -10783,7 +10783,6 @@ MonoBehaviour:
   rb: {fileID: 1839538587}
   moveSpeed: 2
   PlayerInput: {x: 0, y: 0}
-  Player_Anim: {fileID: 0}
 --- !u!50 &1839538587
 Rigidbody2D:
   serializedVersion: 4
@@ -13113,6 +13112,42 @@ PrefabInstance:
     - target: {fileID: 5167734686083998647, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8010780679875025180, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+      propertyPath: m_Size.x
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8010780679875025180, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+      propertyPath: m_Size.y
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8010780679875025180, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 784416299, guid: 8aac0cf9fb18f004aa0e27508b3dc0a0, type: 3}
+    - target: {fileID: 8010780679875025180, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8010780679875025180, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593452636369505426, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.x
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593452636369505426, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.y
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593452636369505426, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593452636369505426, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 0.14
       objectReference: {fileID: 0}
     - target: {fileID: 9167827123522346560, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
       propertyPath: m_LocalPosition.x
