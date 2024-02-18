@@ -19,15 +19,15 @@ public class BombController : MonoBehaviour
     public GameObject[] Parents;
     public Transform[] The_Parents;
     public Vector2[] Parent_vectors;
-    [Space(2f)]
-    [Header("Firepower and Trackers")]
+
+    [Space(2f)] [Header("Firepower and Trackers")]
     public int Firepower;
     public int Firepower_Setter;
     public float Detonator_Timer = 2;
     private float timer2 = 0.2f;
     public int[] Total_Amount_Tracker;
-    private float X_Distance = 1;
-    private float Y_Distance = 1;
+    private float X_Distance = 1.0f;
+    private float Y_Distance = 1.0f;
     [Space(2f)]
     [Header("Explosion Range Detection")]
     public GameObject[] The_Hitbox_Detection;
