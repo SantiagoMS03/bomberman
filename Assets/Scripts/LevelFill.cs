@@ -10,13 +10,13 @@ public class LevelFill : MonoBehaviour
 
     void Start()
     {
-        if (unbreakableBlocksList != null && unbreakableBlocksList.Count >= 2 && startArea != null && finishArea != null)
+        if (unbreakableBlocksList != null && unbreakableBlocksList.Count > 0 && startArea != null && finishArea != null)
         {
             GenerateBreakableBoxes();
         }
         else
         {
-            Debug.LogError("Assign at least two unbreakable blocks, start area, and finish area in the inspector!");
+            Debug.LogError("Assign at least one unbreakable block, start area, and finish area in the inspector!");
         }
     }
 
@@ -25,37 +25,49 @@ public class LevelFill : MonoBehaviour
         Vector3 startAreaPosition = startArea.transform.position;
         Vector3 finishAreaPosition = finishArea.transform.position;
 
-        // Randomly select two directions with equal probability (25% chance for each direction)
-        int firstDirection = Random.Range(1, 5);
-        int secondDirection;
-
-        // Ensure the second direction is different from the first one
-        do
+        foreach (GameObject unbreakableBlock in unbreakableBlocksList)
         {
-            secondDirection = Random.Range(1, 5);
-        } while (secondDirection == firstDirection);
+            // Guarantee one box in a random direction
+            int guaranteedDirection = Random.Range(1, 5);
+            InstantiateBoxInDirection(unbreakableBlock.transform.position, startAreaPosition, finishAreaPosition, guaranteedDirection);
 
-        // Instantiate breakable boxes in the selected directions
-        InstantiateBoxInDirection(unbreakableBlocksList[0].transform.position, startAreaPosition, finishAreaPosition, firstDirection);
-        InstantiateBoxInDirection(unbreakableBlocksList[unbreakableBlocksList.Count - 1].transform.position, startAreaPosition, finishAreaPosition, secondDirection);
+            // 80% chance of having two additional boxes in two different cardinal directions
+            if (Random.value < 0.8f)
+            {
+                List<int> possibleDirections = new List<int> { 1, 2, 3, 4 };
+                possibleDirections.Remove(guaranteedDirection); // Remove the guaranteed direction
+
+                int firstAdditionalDirection = possibleDirections[Random.Range(0, possibleDirections.Count)];
+                InstantiateBoxInDirection(unbreakableBlock.transform.position, startAreaPosition, finishAreaPosition, firstAdditionalDirection);
+
+                possibleDirections.Remove(firstAdditionalDirection);
+
+                if (possibleDirections.Count > 0)
+                {
+                    int secondAdditionalDirection = possibleDirections[Random.Range(0, possibleDirections.Count)];
+                    InstantiateBoxInDirection(unbreakableBlock.transform.position, startAreaPosition, finishAreaPosition, secondAdditionalDirection);
+                }
+            }
+        }
     }
 
     void InstantiateBoxInDirection(Vector3 unbreakableBlocksPosition, Vector3 startAreaPosition, Vector3 finishAreaPosition, int direction)
     {
         Vector3 boxPosition = unbreakableBlocksPosition;
 
+        // Adjusted vector operations for up and down directions
         switch (direction)
         {
-            case 1: // North
-                boxPosition += Vector3.forward * 1.0f;
+            case 1: // North (Up)
+                boxPosition += Vector3.up * 1.0f;
                 break;
-            case 2: // South
-                boxPosition -= Vector3.forward * 1.0f;
+            case 2: // South (Down)
+                boxPosition -= Vector3.up * 1.0f;
                 break;
-            case 3: // West
+            case 3: // West (Left)
                 boxPosition -= Vector3.right * 1.0f;
                 break;
-            case 4: // East
+            case 4: // East (Right)
                 boxPosition += Vector3.right * 1.0f;
                 break;
         }
