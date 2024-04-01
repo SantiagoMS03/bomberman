@@ -1,96 +1,81 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class LevelFill : MonoBehaviour
+public class RandomSpawnGrid : MonoBehaviour
 {
-    public List<GameObject> unbreakableBlocksList;
-    public GameObject startArea;
-    public GameObject finishArea;
-    public GameObject breakableBoxPrefab;
+    public GameObject prefabToSpawn;
+    public int width = 33;
+    public int length = 9;
+    public int numberOfPrefabsToSpawn;
 
-    void Start()
+    private void Start()
     {
-        if (unbreakableBlocksList != null && unbreakableBlocksList.Count > 0 && startArea != null && finishArea != null)
+        List<Vector3> availablePositions = GenerateAvailablePositions();
+        ExcludeUnbreakableBoxPositions(ref availablePositions);
+        ExcludePlayerStartPositions(ref availablePositions);
+
+        if (numberOfPrefabsToSpawn > availablePositions.Count)
         {
-            GenerateBreakableBoxes();
+            Debug.LogWarning($"Requested {numberOfPrefabsToSpawn} prefabs, but only {availablePositions.Count} spots are available after excluding unbreakable and player start areas. Adjusting number to spawn.");
+            numberOfPrefabsToSpawn = availablePositions.Count;
         }
-        else
-        {
-            Debug.LogError("Assign at least one unbreakable block, start area, and finish area in the inspector!");
-        }
+
+        SpawnPrefabs(availablePositions);
     }
 
-    void GenerateBreakableBoxes()
+    List<Vector3> GenerateAvailablePositions()
     {
-        Vector3 startAreaPosition = startArea.transform.position;
-        Vector3 finishAreaPosition = finishArea.transform.position;
-
-        foreach (GameObject unbreakableBlock in unbreakableBlocksList)
+        List<Vector3> positions = new List<Vector3>();
+        Vector3 startPosition = transform.position - new Vector3(width / 2, length / 2, 0);
+        for (int y = 0; y < length; y++)
         {
-            // Guarantee one box in a random direction
-            int guaranteedDirection = Random.Range(1, 5);
-            InstantiateBoxInDirection(unbreakableBlock.transform.position, startAreaPosition, finishAreaPosition, guaranteedDirection);
-
-            // 80% chance of having two additional boxes in two different cardinal directions
-            if (Random.value < 0.8f)
+            for (int x = 0; x < width; x++)
             {
-                List<int> possibleDirections = new List<int> { 1, 2, 3, 4 };
-                possibleDirections.Remove(guaranteedDirection); // Remove the guaranteed direction
-
-                int firstAdditionalDirection = possibleDirections[Random.Range(0, possibleDirections.Count)];
-                InstantiateBoxInDirection(unbreakableBlock.transform.position, startAreaPosition, finishAreaPosition, firstAdditionalDirection);
-
-                possibleDirections.Remove(firstAdditionalDirection);
-
-                if (possibleDirections.Count > 0)
-                {
-                    int secondAdditionalDirection = possibleDirections[Random.Range(0, possibleDirections.Count)];
-                    InstantiateBoxInDirection(unbreakableBlock.transform.position, startAreaPosition, finishAreaPosition, secondAdditionalDirection);
-                }
+                positions.Add(new Vector3(x + startPosition.x, y + startPosition.y, 0));
             }
         }
+        return positions;
     }
 
-    void InstantiateBoxInDirection(Vector3 unbreakableBlocksPosition, Vector3 startAreaPosition, Vector3 finishAreaPosition, int direction)
+    void ExcludeUnbreakableBoxPositions(ref List<Vector3> availablePositions)
     {
-        Vector3 boxPosition = unbreakableBlocksPosition;
-
-        // Adjusted vector operations for up and down directions
-        switch (direction)
+        GameObject[] unbreakables = GameObject.FindGameObjectsWithTag("Unbreakable");
+        foreach (var unbreakable in unbreakables)
         {
-            case 1: // North (Up)
-                boxPosition += Vector3.up * 1.0f;
-                break;
-            case 2: // South (Down)
-                boxPosition -= Vector3.up * 1.0f;
-                break;
-            case 3: // West (Left)
-                boxPosition -= Vector3.right * 1.0f;
-                break;
-            case 4: // East (Right)
-                boxPosition += Vector3.right * 1.0f;
-                break;
+            Vector3 roundedPos = new Vector3(Mathf.RoundToInt(unbreakable.transform.position.x), Mathf.RoundToInt(unbreakable.transform.position.y), 0);
+            availablePositions.Remove(roundedPos);
         }
+    }
 
-        // Check if breakable boxes will interfere with the start or finish areas
-        if (!IsInterferingWithArea(boxPosition, startAreaPosition, finishAreaPosition))
+    void ExcludePlayerStartPositions(ref List<Vector3> availablePositions)
+    {
+        GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
+        if (playerStart != null)
         {
-            // Instantiate breakable boxes at the calculated position
-            Instantiate(breakableBoxPrefab, boxPosition, Quaternion.identity);
+            BoxCollider collider = playerStart.GetComponent<BoxCollider>();
+            Vector2 playerStartSize = new Vector2(collider.size.x * playerStart.transform.localScale.x, collider.size.y * playerStart.transform.localScale.y);
+            Vector2 playerStartPos = new Vector2(playerStart.transform.position.x, playerStart.transform.position.y);
+            Vector2 playerStartBoundsMin = playerStartPos - playerStartSize * 0.5f;
+            Vector2 playerStartBoundsMax = playerStartPos + playerStartSize * 0.5f;
+
+            availablePositions.RemoveAll(pos =>
+                pos.x >= playerStartBoundsMin.x && pos.x <= playerStartBoundsMax.x &&
+                pos.y >= playerStartBoundsMin.y && pos.y <= playerStartBoundsMax.y);
         }
         else
         {
-            Debug.LogWarning("Breakable boxes would interfere with the start or finish areas. Adjust positions.");
+            Debug.LogError("No GameObject with 'PlayerStart' tag found. Please ensure your player start area is tagged correctly.");
         }
     }
 
-    bool IsInterferingWithArea(Vector3 boxPosition, Vector3 startAreaPosition, Vector3 finishAreaPosition)
+    void SpawnPrefabs(List<Vector3> availablePositions)
     {
-        // Define a tolerance value to avoid interference due to float precision
-        float tolerance = 0.1f;
-
-        // Check if the box position is within the tolerance range of start or finish areas
-        return Vector3.Distance(boxPosition, startAreaPosition) < tolerance ||
-               Vector3.Distance(boxPosition, finishAreaPosition) < tolerance;
+        for (int i = 0; i < numberOfPrefabsToSpawn; i++)
+        {
+            int randomIndex = Random.Range(0, availablePositions.Count);
+            Vector3 spawnPosition = availablePositions[randomIndex];
+            Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
+            availablePositions.RemoveAt(randomIndex);
+        }
     }
 }

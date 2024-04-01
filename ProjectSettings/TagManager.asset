@@ -3,7 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Wall
+  - Breakable
+  - PowerUps
+  - Wall2
+  - Bomb
+  - Explosion
+  - Explosion2
+  - Unbreakable
+  - PlayerStart
   layers:
   - Default
   - TransparentFX
