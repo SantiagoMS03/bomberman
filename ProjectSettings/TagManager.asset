@@ -13,14 +13,15 @@ TagManager:
   - Explosion2
   - Unbreakable
   - PlayerStart
+  - Node
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Node
   - Water
   - UI
-  - 
+  - Obstacle
   - 
   - 
   - 

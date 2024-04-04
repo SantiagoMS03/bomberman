@@ -1,81 +1,57 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
-public class RandomSpawnGrid : MonoBehaviour
+public class RandomPlacementsOnTilemap : MonoBehaviour
 {
-    public GameObject prefabToSpawn;
-    public int width = 33;
-    public int length = 9;
-    public int numberOfPrefabsToSpawn;
+    public Tilemap availableSpotsTilemap; // Assign your Tilemap in the Unity Inspector
+    public GameObject objectToPlacePrefab; // Assign the GameObject prefab you wish to place
+    public int numberOfObjectsToPlace = 5; // The number of GameObjects you want to place
 
-    private void Start()
+    void Start()
     {
-        List<Vector3> availablePositions = GenerateAvailablePositions();
-        ExcludeUnbreakableBoxPositions(ref availablePositions);
-        ExcludePlayerStartPositions(ref availablePositions);
-
-        if (numberOfPrefabsToSpawn > availablePositions.Count)
-        {
-            Debug.LogWarning($"Requested {numberOfPrefabsToSpawn} prefabs, but only {availablePositions.Count} spots are available after excluding unbreakable and player start areas. Adjusting number to spawn.");
-            numberOfPrefabsToSpawn = availablePositions.Count;
-        }
-
-        SpawnPrefabs(availablePositions);
+        PlaceObjectsRandomly();
     }
 
-    List<Vector3> GenerateAvailablePositions()
+    void PlaceObjectsRandomly()
     {
-        List<Vector3> positions = new List<Vector3>();
-        Vector3 startPosition = transform.position - new Vector3(width / 2, length / 2, 0);
-        for (int y = 0; y < length; y++)
+        List<Vector3Int> availablePositions = new List<Vector3Int>();
+
+        // Loop through all the tiles in the Tilemap to find available spots
+        BoundsInt bounds = availableSpotsTilemap.cellBounds;
+        TileBase[] allTiles = availableSpotsTilemap.GetTilesBlock(bounds);
+
+        for (int x = bounds.xMin; x < bounds.xMax; x++)
         {
-            for (int x = 0; x < width; x++)
+            for (int y = bounds.yMin; y < bounds.yMax; y++)
             {
-                positions.Add(new Vector3(x + startPosition.x, y + startPosition.y, 0));
+                Vector3Int localPosition = new Vector3Int(x, y, (int)availableSpotsTilemap.transform.position.z);
+                TileBase tile = availableSpotsTilemap.GetTile(localPosition);
+                if (tile != null) // If there's a tile, it's an available spot
+                {
+                    availablePositions.Add(localPosition);
+                }
             }
         }
-        return positions;
-    }
 
-    void ExcludeUnbreakableBoxPositions(ref List<Vector3> availablePositions)
-    {
-        GameObject[] unbreakables = GameObject.FindGameObjectsWithTag("Unbreakable");
-        foreach (var unbreakable in unbreakables)
+        // Randomly select positions to place objects
+        for (int i = 0; i < numberOfObjectsToPlace; i++)
         {
-            Vector3 roundedPos = new Vector3(Mathf.RoundToInt(unbreakable.transform.position.x), Mathf.RoundToInt(unbreakable.transform.position.y), 0);
-            availablePositions.Remove(roundedPos);
-        }
-    }
+            if (availablePositions.Count == 0)
+            {
+                Debug.LogWarning("Not enough available spots to place all objects!");
+                break;
+            }
 
-    void ExcludePlayerStartPositions(ref List<Vector3> availablePositions)
-    {
-        GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
-        if (playerStart != null)
-        {
-            BoxCollider collider = playerStart.GetComponent<BoxCollider>();
-            Vector2 playerStartSize = new Vector2(collider.size.x * playerStart.transform.localScale.x, collider.size.y * playerStart.transform.localScale.y);
-            Vector2 playerStartPos = new Vector2(playerStart.transform.position.x, playerStart.transform.position.y);
-            Vector2 playerStartBoundsMin = playerStartPos - playerStartSize * 0.5f;
-            Vector2 playerStartBoundsMax = playerStartPos + playerStartSize * 0.5f;
-
-            availablePositions.RemoveAll(pos =>
-                pos.x >= playerStartBoundsMin.x && pos.x <= playerStartBoundsMax.x &&
-                pos.y >= playerStartBoundsMin.y && pos.y <= playerStartBoundsMax.y);
-        }
-        else
-        {
-            Debug.LogError("No GameObject with 'PlayerStart' tag found. Please ensure your player start area is tagged correctly.");
-        }
-    }
-
-    void SpawnPrefabs(List<Vector3> availablePositions)
-    {
-        for (int i = 0; i < numberOfPrefabsToSpawn; i++)
-        {
             int randomIndex = Random.Range(0, availablePositions.Count);
-            Vector3 spawnPosition = availablePositions[randomIndex];
-            Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
-            availablePositions.RemoveAt(randomIndex);
+            Vector3Int selectedCellPosition = availablePositions[randomIndex];
+            availablePositions.RemoveAt(randomIndex); // Remove to avoid duplicates
+
+            // Convert the cell position to world position for instantiation
+            Vector3 worldPosition = availableSpotsTilemap.CellToWorld(selectedCellPosition) + new Vector3(0.5f, 0.5f, 0); // Adjust for centering if necessary
+
+            // Instantiate the GameObject at the selected position
+            Instantiate(objectToPlacePrefab, worldPosition, Quaternion.identity);
         }
     }
 }
