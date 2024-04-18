@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 547721713585897618}
   - component: {fileID: 5263447943412305875}
+  - component: {fileID: 7887437202529788601}
   - component: {fileID: 5235280816195610492}
   - component: {fileID: 3562134304929011951}
   - component: {fileID: 933341411743386036}
-  - component: {fileID: 7887437202529788601}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -88,6 +88,28 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &7887437202529788601
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686623625580520253}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 59e3e48263babc845b1bffbddc35ce33, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &5235280816195610492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,14 +122,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eff98dc5edfff44f889f5ba1fbf0415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Dying: 0
+  Dead: 0
   CanPlaceBomb: 1
+  Inside_Wall: 0
   Lay_Bomb: 0
+  RC_Status: 0
   Bombs_Dropped: 0
   Bombs_Maxed: 1
   Cooldown: 3
   Cooldown_OG: 3
-  Spawn_Bombs: {fileID: 5167734686083998647, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+  Spawn_Bombs: {fileID: 7149787864353103232, guid: 47aa3f59a8d0928418922ff2d931ec89, type: 3}
   BombEffects: {fileID: 523912565110717950, guid: ebb9411ee7ba4f543ba0602a608d3f4b, type: 3}
+  FireProof_Status: 0
+  Invincible: 0
+  I_Timer: 30
+  I_Timer_Max: 30
+  Wall_Status: 0
+  Bomb_Status: 0
+  Fire_Status: 0
   rb: {fileID: 3562134304929011951}
   moveSpeed: 2
   PlayerInput: {x: 0, y: 0}
@@ -174,25 +207,3 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.1
---- !u!95 &7887437202529788601
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1686623625580520253}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 59e3e48263babc845b1bffbddc35ce33, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0

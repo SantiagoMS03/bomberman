@@ -3,21 +3,36 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Wall
+  - Breakable
+  - PowerUps
+  - Wall2
+  - Bomb
+  - Explosion
+  - Explosion2
+  - Breakable2
+  - Enemies
+  - Door
+  - PlayerStart
+  - Node
+  - Unbreakable
+  - Stage n Life Sys
+  - ScoreText
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Bomb
+  - Player
+  - Breakable
+  - Explosion
+  - Obstacle
+  - Node
+  - Unbreakable
   - 
   - 
   - 

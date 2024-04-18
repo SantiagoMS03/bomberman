@@ -49,7 +49,7 @@ public class Patrol : MonoBehaviour
         // If there's an obstacle, you can handle it here (e.g., stop, change direction, etc.)
         else
         {
-            Debug.Log("Obstacle detected!");
+         //   Debug.Log("Obstacle detected!");
             // Handle the obstacle (e.g., change direction or stop)
         }
     }

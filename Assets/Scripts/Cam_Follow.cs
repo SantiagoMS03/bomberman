@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Cam_Follow : MonoBehaviour
 {
+    public GameObject Player;
     private Transform target;
+    public bool Move_Y;
     public Vector3 offset;
     [Space(2f)]
     [Header("Camera Distance")]
@@ -22,15 +24,24 @@ public class Cam_Follow : MonoBehaviour
 
     public void Start()
     {
-        GameObject player = GameObject.FindWithTag("Player");
-        target = player.GetComponent<Transform>();
+      //  GameObject player = GameObject.FindWithTag("Player");
+        target = Player.GetComponent<Transform>();
     }
 
 
     void Update()
     {
-        newPos = new Vector3(target.position.x + offset.x, Y_Start_Position, target.position.z + offset.z);
-        newPos2 = new Vector3(target.position.x + offset.x, Y_Start_Position, target.position.z + 0);
+        if (!Move_Y)
+        {
+            newPos = new Vector3(target.position.x + offset.x, Y_Start_Position, target.position.z + offset.z);
+            newPos2 = new Vector3(target.position.x + offset.x, Y_Start_Position, target.position.z + 0);
+        }
+        else
+        {
+            newPos = new Vector3(target.position.x + offset.x, target.position.y + offset.y, target.position.z + offset.z);
+            newPos2 = new Vector3(target.position.x + offset.x, target.position.y + offset.y, target.position.z + 0);
+        }
+     
         transform.position = Vector3.SmoothDamp(transform.position, newPos, ref velocity, 0);
         Vector3 clampedPosition = transform.position;
         Vector3 clampedPosition2 = transform.position;
@@ -40,6 +51,14 @@ public class Cam_Follow : MonoBehaviour
         clampedPosition2.y = Mathf.Clamp(clampedPosition2.y, Y_Start_Position, Y_End_Position);
         clampedPosition3.z = Mathf.Clamp(clampedPosition3.z, Z_Start_Position, Z_End_Position);
 
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, X_Start_Position, X_End_Position), Y_Start_Position, transform.position.z);
+        if (!Move_Y)
+        {
+            transform.position = new Vector3(Mathf.Clamp(transform.position.x, X_Start_Position, X_End_Position), Y_Start_Position, transform.position.z);
+        }
+        else
+        {
+            transform.position = new Vector3(Mathf.Clamp(transform.position.x, X_Start_Position, X_End_Position), Mathf.Clamp(transform.position.y, Y_Start_Position, Y_End_Position), transform.position.z);
+        }
+           
     }
 }
